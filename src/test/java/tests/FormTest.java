@@ -1,94 +1,83 @@
 package tests;
 
-import com.codeborne.selenide.Configuration;
+import models.Person;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import pages.FormPage;
+import services.FileFromResourceUploader;
 
 import java.io.File;
+import java.net.URISyntaxException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.*;
 import static org.openqa.selenium.By.tagName;
-import static org.openqa.selenium.By.xpath;
 
-public class FormTest {
+public class FormTest extends TestBase {
+
+    private static FormPage formPage;
+    private static Person person;
 
     @BeforeAll
-    static void beforeAll() {
-        Configuration.baseUrl = "https://demoqa.com";
-        Configuration.browserSize = "1920x1080";
+    static void beforeAll() throws URISyntaxException {
+
+        formPage = new FormPage();
+        File userPhoto = new FileFromResourceUploader().getFileFromResource("123.jpeg");
+
+        person = new Person("Alex",
+                "Alexander",
+                "aalex@gmail.com",
+                "1231123532",
+                "Address 10. 2012 house 21",
+                userPhoto,
+                "Delhi",
+                "NCR",
+                "Male",
+                LocalDateTime.now(),
+                new String[]{"English", "Hindi"},
+                new String[]{"Reading", "Music"});
     }
 
     @Test
-    void successfulTest() {
-
-        File userPicture = new File("/Users/david/Downloads/123.jpeg");
-        Person person = new Person("Alex", "Alexander", "aalex@gmail.com",
-                "1231123532", "Address 10. 2012 house 21", userPicture,
-                "Delhi", "NCR");
+    void formTest() {
 
         open("/automation-practice-form");
-        clearBanners();
-        populateForm(person);
+        removeBanners();
 
-        $(tagName("table")).shouldHave(text(person.city), text(person.currentAddress), text(person.personName), text(person.state),
-                text(person.email), text(person.personSurname), text(person.state), text(person.userPicture.getName()), text(person.phoneNumber));
+        formPage.setFirstName(person.name)
+                .setSurname(person.surname)
+                .setEmail(person.email)
+                .setNumber(person.phoneNumber)
+                .setGender(person.gender)
+                .setDateOfBirth(person.dateOfBirth)
+                .setSubjects(person.subjects)
+                .setHobbies(person.hobbies)
+                .uploadPicture(person.photo)
+                .setAddress(person.currentAddress)
+                .setState(person.state)
+                .setCity(person.city)
+                .submitForm();
+
+        $(tagName("table")).shouldHave(
+                text(person.name),
+                text(person.surname),
+                text(person.email),
+                text(person.phoneNumber),
+                text(person.currentAddress),
+                text(person.state),
+                text(person.city),
+                text(person.gender),
+                text(String.join(", ", person.hobbies)),
+                text(String.join(", ", person.subjects)),
+                text(person.dateOfBirth.format(DateTimeFormatter.ofPattern("dd MMMM,yyyy"))),
+                text(person.photo.getName()));
     }
 
-    private void clearBanners() {
+    private void removeBanners() {
         executeJavaScript("$('footer').remove()");
         executeJavaScript("$('#fixedban').remove()");
     }
-
-    private void populateForm(Person person) {
-
-        $("#firstName").setValue(person.personName);
-        $("#lastName").setValue(person.personSurname);
-        $("#userEmail").setValue(person.email);
-        $("#genterWrapper #gender-radio-1 + label").click();
-        $("#userNumber").setValue(person.phoneNumber);
-
-        $("#dateOfBirthInput").click();
-        $(".react-datepicker [aria-label='Choose Wednesday, August 17th, 2022']").click();
-
-        $("#subjectsContainer input").sendKeys("English");
-        $(".subjects-auto-complete__menu #react-select-2-option-0").click();
-        $("#hobbiesWrapper #hobbies-checkbox-1 + label").click();
-
-        $("#uploadPicture").uploadFile(person.userPicture);
-
-        $("#currentAddress").setValue(person.currentAddress);
-
-        $("#state").click();
-        $(xpath(String.format("//*[@id='state']//*[contains(text(), '%s')]", person.state))).click();
-
-        $("#city").click();
-        $(xpath(String.format("//*[@id='city']//*[contains(text(), '%s')]", person.city))).click();
-
-        $("#submit").click();
-    }
 }
 
-class Person {
-    String personName;
-    String personSurname;
-    String email;
-    String phoneNumber;
-    String currentAddress;
-    String city;
-    String state;
-    File userPicture;
-
-    public Person(String personName, String personSurname, String email, String phoneNumber,
-                  String currentAddress, File userPicture, String city, String state) {
-
-        this.personName = personName;
-        this.personSurname = personSurname;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.currentAddress = currentAddress;
-        this.userPicture = userPicture;
-        this.city = city;
-        this.state = state;
-    }
-}
