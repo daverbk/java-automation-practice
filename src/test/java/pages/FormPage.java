@@ -3,7 +3,7 @@ package pages;
 import services.FirstLetterCapitalization;
 
 import java.io.File;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
@@ -40,7 +40,7 @@ public class FormPage {
         return this;
     }
 
-    public FormPage setDateOfBirth(LocalDateTime personDateOfBirth) {
+    public FormPage setDateOfBirth(LocalDate personDateOfBirth) {
         String month = new FirstLetterCapitalization().capitalizeFirstLetter(personDateOfBirth.getMonth().toString().toLowerCase());
 
         $("#dateOfBirthInput").click();

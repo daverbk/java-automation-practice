@@ -1,7 +1,9 @@
 package models;
 
+import com.github.javafaker.Faker;
+
 import java.io.File;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Person {
     public String name;
@@ -13,25 +15,26 @@ public class Person {
     public String state;
     public File photo;
     public String gender;
-    public LocalDateTime dateOfBirth;
+    public LocalDate dateOfBirth;
     public String[] subjects;
     public String[] hobbies;
 
-    public Person(String name, String surname, String email, String phoneNumber,
-                  String currentAddress, File photo, String city, String state,
-                  String gender, LocalDateTime dateOfBirth, String[] subjects,
-                  String[] hobbies) {
+    public Person(File photo, String city, String state, String gender, String[] subjects, String[] hobbies) {
 
-        this.name = name;
-        this.surname = surname;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.currentAddress = currentAddress;
+        Faker faker = new Faker();
+
+        this.name = faker.name().firstName();
+        this.surname = faker.name().lastName();
+        this.email = faker.internet().emailAddress();
+        this.phoneNumber = faker.phoneNumber().subscriberNumber(10);
+        this.currentAddress = faker.address().fullAddress();
+
+        this.dateOfBirth = LocalDate.now();
+
         this.photo = photo;
         this.city = city;
         this.state = state;
         this.gender = gender;
-        this.dateOfBirth = dateOfBirth;
         this.subjects = subjects;
         this.hobbies = hobbies;
     }

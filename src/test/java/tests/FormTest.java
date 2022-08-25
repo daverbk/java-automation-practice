@@ -8,7 +8,6 @@ import services.FileFromResourceUploader;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static com.codeborne.selenide.Condition.text;
@@ -26,16 +25,11 @@ public class FormTest extends TestBase {
         formPage = new FormPage();
         File userPhoto = new FileFromResourceUploader().getFileFromResource("123.jpeg");
 
-        person = new Person("Alex",
-                "Alexander",
-                "aalex@gmail.com",
-                "1231123532",
-                "Address 10. 2012 house 21",
+        person = new Person(
                 userPhoto,
                 "Delhi",
                 "NCR",
                 "Male",
-                LocalDateTime.now(),
                 new String[]{"English", "Hindi"},
                 new String[]{"Reading", "Music"});
     }
