@@ -20,7 +20,7 @@ public class FormTest extends TestBase {
     private static Person person;
 
     @BeforeAll
-    static void beforeAll() throws URISyntaxException {
+    public static void beforeAll() throws URISyntaxException {
 
         formPage = new FormPage();
         File userPhoto = new FileFromResourceUploader().getFileFromResource("123.jpeg");
@@ -35,7 +35,7 @@ public class FormTest extends TestBase {
     }
 
     @Test
-    void formTest() {
+    public void formTest() {
 
         open("/automation-practice-form");
         removeBanners();
